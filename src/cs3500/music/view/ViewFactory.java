@@ -1,5 +1,9 @@
 package cs3500.music.view;
 
+import javax.swing.text.CompositeView;
+
+import cs3500.music.controller.KeyboardListener;
+import cs3500.music.controller.MouseInputListener;
 import cs3500.music.model.ModelOperations;
 
 /**
@@ -14,7 +18,7 @@ public final class ViewFactory {
    * @param typeOfView the String input
    * @return A ViewOperations implementation of the appropriate type
    */
-  public static final ViewOperations create(String typeOfView, ModelOperations model) {
+  public static ViewOperations create(String typeOfView, ModelOperations model) {
     switch (typeOfView) {
       case "visual":
         return new VisualView(model);
@@ -22,6 +26,8 @@ public final class ViewFactory {
         return new MidiView(model);
       case "console":
         return new TextualView(model);
+      case "composite":
+        return new CombinedView(model);
       default:
         throw new IllegalArgumentException("Incorrect String, cannot make that type of view: "
                 + typeOfView);

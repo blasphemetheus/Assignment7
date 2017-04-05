@@ -4,9 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Dimension;
-
-
-
+import java.util.List;
 
 
 import javax.swing.JLabel;
@@ -19,26 +17,37 @@ import javax.swing.JScrollPane;
 
 import cs3500.music.controller.ButtonListener;
 import cs3500.music.controller.KeyboardListener;
+import cs3500.music.controller.MouseInputListener;
 import cs3500.music.model.ModelOperations;
+import cs3500.music.model.Note;
 
 /**
  * A skeleton Frame (i.e., a window) in Swing
  */
-public class VisualView extends javax.swing.JFrame implements ViewOperations {
+public class VisualView extends javax.swing.JFrame implements VisualOperations, ViewOperations {
   private final ConcreteGuiViewPanel displayPanel; // You may want to refine this to a subtype of JPanel
   // Fossils from the MVC Class Example
   private JLabel display;
   private JButton echoButton;
   private JButton exitButton;
   private JTextField input;
+  private boolean scroll;
   JScrollPane scroller;
   private Graphics g;
   private Graphics2D g2;
   public int width = 1000;
   public int height = 600;
 
-  ModelOperations model;
 
+  public static final int X_FRAME = 10;
+  public static final int Y_FRAME = 10;
+  public static final int X_SCALE = 10;
+  public static final int Y_SCALE = 10;
+
+
+
+
+  ModelOperations viewModel;
 
   /**
    * Default public constructor, creates new VisualView.
@@ -46,7 +55,8 @@ public class VisualView extends javax.swing.JFrame implements ViewOperations {
   public VisualView(ModelOperations model) {
     super("Music Editor");
     // String first = model.getNotes().get(0).toString();
-    this.model = model;
+    this.viewModel = model;
+    this.scroll = false;
     displayPanel = new ConcreteGuiViewPanel(model);
     displayPanel.setFocusable(true);
     displayPanel.requestFocusInWindow();
@@ -121,10 +131,7 @@ public class VisualView extends javax.swing.JFrame implements ViewOperations {
   }
 
   @Override
-  public void addActionListener(ButtonListener buttonListener) {
-    // Todo this method
-    // this method will add action listeners in the future
-
+  public void removeKeyListener(KeyboardListener kbd) {
 
   }
 
@@ -138,4 +145,76 @@ public class VisualView extends javax.swing.JFrame implements ViewOperations {
     displayPanel.moveLeft();
   }
 
+  @Override
+  public void addMouseListener(MouseInputListener mil) {
+
+  }
+
+  @Override
+  public void removeMouseListener(MouseInputListener mil) {
+
+  }
+
+  @Override
+  public void togglePlayback() {
+    // does nothing
+  }
+
+  @Override
+  public void jumpToBeginning() {
+
+  }
+
+  @Override
+  public void jumpToEnd() {
+
+  }
+
+  @Override
+  public void addNoteAtBeat(Note note) {
+
+  }
+
+  @Override
+  public void addNoteAtBeat() {
+
+  }
+
+  @Override
+  public void updateRedLine() {
+    boolean scroller = false;
+
+    if (displayPanel.getMaximumSize().width > this.getWidth()) {
+      scroller = true;
+    }
+
+    if (scroller & scroll) {
+      this.scrollRight();
+    }
+
+    this.displayPanel.updateRedLine();
+
+    this.repaint();
+  }
+
+  private void scrollRight() {
+    System.out.println("Scroll right");
+  }
+
+  @Override
+  public void toggleScroll() {
+    scroll = !scroll;
+  }
+
+  @Override
+  public List<Note> getNotesAtCurrentBeat() {
+    return viewModel.getAllStartingAtBeat(this.displayPanel.bar);
+  }
+
+  @Override
+  public void update() {
+    // TODO ADD Methods to reclaculate the endNote
+
+    this.repaint();
+  }
 }

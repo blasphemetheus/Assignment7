@@ -2,8 +2,12 @@ package cs3500.music;
 
 import cs3500.music.controller.ControllerOperations;
 import cs3500.music.controller.MusicController;
+import cs3500.music.model.Duration;
 import cs3500.music.model.ModelOperations;
 import cs3500.music.model.MusicModel;
+import cs3500.music.model.Note;
+import cs3500.music.model.Octave;
+import cs3500.music.model.Pitch;
 import cs3500.music.util.MusicReader;
 import cs3500.music.view.ViewFactory;
 import cs3500.music.view.ViewOperations;
@@ -22,7 +26,7 @@ public class MusicEditor {
    * In a MVC fashion renders a view to the client, stores information in the model and allows a
    * controller to direct things (on actions/buttons do things) for the editor. The String[] args
    * passed in allow us to read in files as well as help determine the view output type
-   * (ie console = text to console, midi = audio playback, visual = gui interface).
+   * (ie console = text to console, midi = audio playback, visual = gui interface, ).
    *
    * @param args a file to be read in's name (ie "example.txt"), and then the specified view
    */
@@ -30,7 +34,7 @@ public class MusicEditor {
     // default value for no specified file is ""
     String fileName = "";
     // default value for if no arguments are specified is "visual"
-    String typeOfView = "visual";
+    String typeOfView = "composite";
 
     ModelOperations model;
     ViewOperations view;
@@ -72,14 +76,14 @@ public class MusicEditor {
     // TO REFLECT THE PLACE YOU STORE YOUR TXT FILES
     // (for Apple products the slashes go the other way too)
     String path = "C:\\songs\\";
-    Readable fileReader = new FileReader(path + fileName);
 
     // if reading from file then make model from file, else make an entirely new model
     if (useFile) {
-      model = MusicReader.parseFile(fileReader, new MusicModel.Builder());
+      model = MusicEditor.getFromFile(fileName);
       System.out.println(model.getNotes().toString());
     } else {
       model = new MusicModel();
+      model.addNote(new Note(Pitch.C, Octave.FOUR, new Duration(1, 4)));
       System.out.println(model.getNotes().toString());
     }
 
@@ -92,6 +96,13 @@ public class MusicEditor {
     //    ViewOperations visualView = ViewFactory.create("visual");
     //    ViewOperations midiView = ViewFactory.create("midi");
     //    ViewOperations textView = ViewFactory.create("console");
-    System.out.println("This text should probably not be on the screen");
+    System.out.println("This text siginifies the end of the main method");
+  }
+
+
+  static ModelOperations getFromFile(String filename) throws IOException {
+    String path = "C:\\songs\\";
+    Readable fileReader = new FileReader(path + filename);
+    return MusicReader.parseFile(fileReader, new MusicModel.Builder());
   }
 }

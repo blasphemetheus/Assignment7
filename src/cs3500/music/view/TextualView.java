@@ -6,6 +6,7 @@ import java.util.List;
 
 import cs3500.music.controller.ButtonListener;
 import cs3500.music.controller.KeyboardListener;
+import cs3500.music.controller.MouseInputListener;
 import cs3500.music.model.Duration;
 import cs3500.music.model.ModelOperations;
 import cs3500.music.model.Note;
@@ -58,10 +59,9 @@ public class TextualView implements ViewOperations {
   }
 
   @Override
-  public void addActionListener(ButtonListener buttonListener) {
-    // does nothing, because no command should do anything as of yet
-  }
+  public void removeKeyListener(KeyboardListener kbd) {
 
+  }
 
   // MAKE SURE TO USE getNotes() !!!!!!!!!!!!!!
 
@@ -216,5 +216,45 @@ public class TextualView implements ViewOperations {
   public void moveLeft() {
 
     // DOES NOTHING BECAUSE THIS VIEW DOES NOT FIND THAT COMMAND TO BE USEFUL
+  }
+
+  @Override
+  public void addMouseListener(MouseInputListener mil) {
+
+  }
+
+  @Override
+  public void removeMouseListener(MouseInputListener mil) {
+
+  }
+
+  @Override
+  public void togglePlayback() {
+
+  }
+
+  @Override
+  public void jumpToBeginning() {
+
+  }
+
+  @Override
+  public void jumpToEnd() {
+
+  }
+
+  @Override
+  public void addNoteAtBeat(Note note) {
+    System.out.println("addnoteatbeat in midiview");
+  }
+
+  @Override
+  public void addNoteAtBeat() {
+    //DO NOthing
+  }
+
+  @Override
+  public void update() {
+
   }
 }

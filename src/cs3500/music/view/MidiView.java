@@ -1,6 +1,8 @@
 package cs3500.music.view;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiChannel;
@@ -8,27 +10,40 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
+import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 
-import cs3500.music.controller.ButtonListener;
 import cs3500.music.controller.KeyboardListener;
+import cs3500.music.controller.MouseInputListener;
+import cs3500.music.mocks.MockReciever;
+import cs3500.music.mocks.MockSynthesizer;
 import cs3500.music.model.ModelOperations;
+import cs3500.music.model.MusicModel;
 import cs3500.music.model.Note;
 import cs3500.music.model.Octave;
 import cs3500.music.model.Pitch;
 
+// ASSIGNMENT 7: changed how midi works fro synthesizer and reciever to a sequencer (so
+//                  we can easily jump around the sequence given the methods of a sequencer)
+
+// ASSIGNMENT 7: changed how midi works (added a testing boolean so we can skip the delay,
+// in a separate constructor)
 /**
  * The view that renders as audio (via MIDI) playback.
  */
-public class MidiView implements ViewOperations {
+public class MidiView implements MidiOperations, ViewOperations {
   ModelOperations model;
   private Synthesizer synth;
+  private Sequencer sequencer;
   private Receiver receiver;
+  private boolean testing;
+  private int currentBeat;
+  private boolean pause;
 
 
   //  /**
-  //   * The default constructor for the MidiView.
+  //   * The constructor for the MidiView that does not use a model.
   //   */
   //  public MidiView() {
   //    try {
@@ -54,6 +69,34 @@ public class MidiView implements ViewOperations {
       e.printStackTrace();
     }
     this.model = model;
+    this.testing = false;
+    this.currentBeat = 0;
+    this.pause = true;
+  }
+
+  /**
+   * The testing constructor for the MidiView.
+   */
+  public MidiView(ModelOperations model, boolean testing) {
+
+    if (testing) {
+      this.receiver = new MockReciever(new StringBuilder());
+      this.synth = new MockSynthesizer(new StringBuilder());
+
+
+    } else {
+      try {
+        this.synth = MidiSystem.getSynthesizer();
+        this.receiver = synth.getReceiver();
+        this.synth.open();
+      } catch (MidiUnavailableException e) {
+        e.printStackTrace();
+      }
+    }
+    this.model = model;
+    this.testing = testing;
+    this.currentBeat = 0;
+    this.pause = true;
   }
 
   /**
@@ -71,6 +114,9 @@ public class MidiView implements ViewOperations {
     List<Note> listOfNotes = model.getNotes();
 
     System.out.println("play song now");
+
+//    Timer timer = new Timer();
+//    timer.schedule(new MyTimerTask(), 0, model.getTempo() / 1000);
 
     for (Note note : listOfNotes) {
       try {
@@ -199,8 +245,7 @@ public class MidiView implements ViewOperations {
   }
 
   @Override
-  public void addActionListener(ButtonListener buttonListener) {
-    // useless in this view
+  public void removeKeyListener(KeyboardListener kbd) {
 
   }
 
@@ -214,6 +259,47 @@ public class MidiView implements ViewOperations {
   public void moveLeft() {
     // useless in this view
 
+  }
+
+  @Override
+  public void addMouseListener(MouseInputListener mil) {
+
+  }
+
+  @Override
+  public void removeMouseListener(MouseInputListener mil) {
+
+  }
+
+  @Override
+  public void togglePlayback() {
+
+
+  }
+
+  @Override
+  public void jumpToBeginning() {
+    // DO NOTHING?
+  }
+
+  @Override
+  public void jumpToEnd() {
+    // DO NOTHING?
+  }
+
+  @Override
+  public void addNoteAtBeat(Note note) {
+    // DO NOTHING
+  }
+
+  @Override
+  public void addNoteAtBeat() {
+    //DO Nothing
+  }
+
+  @Override
+  public void update() {
+    // DO NOTHING
   }
 
   /**
@@ -237,6 +323,22 @@ public class MidiView implements ViewOperations {
 
   ///////////////////////////////////////////////////////////////////////////////////
 
+
+  public static MidiView.Builder builder() {
+    return new MidiView.Builder();
+  }
+
+  @Override
+  public void setSequencer(Sequencer sequencer) {
+    this.sequencer = sequencer;
+  }
+
+  @Override
+  public void setModel(ModelOperations model) {
+    this.model = model;
+  }
+
+
   /*
   You must implement either a builder or convenience constructors for your MIDI view,
   so that by default the view uses the actual MIDI synthesizer, but for testing can be run
@@ -255,7 +357,32 @@ public class MidiView implements ViewOperations {
    * use my mocks instead.
    */
   public static final class Builder {
+    private MidiView midiView;
 
+    Builder() {
+      this.midiView = new MidiView(new MusicModel());
+    }
 
+    public Builder setModel(ModelOperations model) {
+      midiView.setModel(model);
+      return this;
+    }
+
+    /**
+     * Build using a midiDevice
+     * @return the Builder
+     */
+    public Builder setSequencer(Sequencer sequencer) {
+      midiView.setSequencer(sequencer);
+      return this;
+    }
+
+    /**
+     * Build the stored midiView.
+     * @return the built midiView
+     */
+    public MidiView build() {
+      return midiView;
+    }
   }
 }
