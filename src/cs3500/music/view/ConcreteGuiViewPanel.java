@@ -21,10 +21,10 @@ import cs3500.music.model.Pitch;
  */
 public class ConcreteGuiViewPanel extends JPanel {
 
-  private ModelOperations model;
+  private ModelOperations viewModel;
 
   public ConcreteGuiViewPanel(ModelOperations model) {
-    this.model = model;
+    this.viewModel = model;
   }
 
   public final int NOTE_HEIGHT = 10;
@@ -35,7 +35,7 @@ public class ConcreteGuiViewPanel extends JPanel {
   public java.util.List<Note> firstline = new ArrayList<>();
   public java.util.List<Integer> beats = new ArrayList<>();
   public java.util.List<Note> allNotes = new ArrayList<>();
-  private int bar;
+  public int bar;
 
   @Override
   public void paintComponent(Graphics g) {
@@ -87,12 +87,12 @@ public class ConcreteGuiViewPanel extends JPanel {
    */
   public void makeNotes(Graphics g) {
     int duration;
-    for (Note note : model.getNotes()) {
+    for (Note note : viewModel.getNotes()) {
       duration = note.getDur().getEndBeat() - note.getBeatStart();
       g.setColor(Color.GREEN);
       g.fillRect(note.getBeatStart() * NOTE_WIDTH + (2 * NOTE_WIDTH),
               NOTE_WIDTH + 5 +
-                      NOTE_WIDTH * (model.getHighestNote().getPitch().getOrderVal()
+                      NOTE_WIDTH * (viewModel.getHighestNote().getPitch().getOrderVal()
                               - note.getPitch().getOrderVal()),
               //(Collections.max(beats) - note.getPitch().getOrder()),
               NOTE_WIDTH * (duration),
@@ -101,7 +101,7 @@ public class ConcreteGuiViewPanel extends JPanel {
       g.fillRect(note.getBeatStart() * NOTE_WIDTH + (2 * NOTE_WIDTH),
               //(Collections.max(beats) - note.getPitch().getOrder()),
               NOTE_WIDTH + 5 +
-                      NOTE_WIDTH * (model.getHighestNote().getPitch().getOrderVal()
+                      NOTE_WIDTH * (viewModel.getHighestNote().getPitch().getOrderVal()
                               - note.getPitch().getOrderVal()),
               NOTE_WIDTH,
               NOTE_HEIGHT * 2);
@@ -146,8 +146,8 @@ public class ConcreteGuiViewPanel extends JPanel {
    */
   public void makeBeatText(Graphics g) {
     ///Extract the end beats of our notes and store them
-    for (int i = 0; i < model.getNotes().size(); i++) {
-      java.util.List<Note> lon = model.getNotes();
+    for (int i = 0; i < viewModel.getNotes().size(); i++) {
+      java.util.List<Note> lon = viewModel.getNotes();
       Duration dur = lon.get(i).getDur();
       int endBeat = dur.getEndBeat();
       beats.add(endBeat);
@@ -168,11 +168,11 @@ public class ConcreteGuiViewPanel extends JPanel {
     ///Accumulate pitches and octaves to empty lists to determine min and max values
     java.util.List<Integer> firstline1 = new ArrayList<>();
     java.util.List<Integer> firstline2 = new ArrayList<>();
-    for (int i = 0; i < model.getNotes().size(); i++) {
-      firstline1.add(model.getNotes().get(i).getPitch().getOrderVal());
+    for (int i = 0; i < viewModel.getNotes().size(); i++) {
+      firstline1.add(viewModel.getNotes().get(i).getPitch().getOrderVal());
     }
-    for (int i = 0; i < model.getNotes().size(); i++) {
-      firstline2.add(model.getNotes().get(i).getOctave().toInt());
+    for (int i = 0; i < viewModel.getNotes().size(); i++) {
+      firstline2.add(viewModel.getNotes().get(i).getOctave().toInt());
     }
 
     ///Sort out maximums and minimums
@@ -233,5 +233,9 @@ public class ConcreteGuiViewPanel extends JPanel {
    */
   public void moveLeft() {
     this.bar += NOTE_WIDTH;
+  }
+
+  public void updateRedLine() {
+    System.out.println("Updates red line in concreteguiviewpanel");
   }
 }
