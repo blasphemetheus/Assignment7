@@ -70,13 +70,6 @@ public class MusicEditor {
     // PlatformLogger.getLogger("java.util.prefs");
     //    platformLogger.setLevel(PlatformLogger.Level.OFF);
 
-
-    // TODO Look at the below comment
-    // ATTENTION, TO RUN SUCCESSFULLY ON YOUR COMPUTER YOU MUST CHANGE THIS PATH
-    // TO REFLECT THE PLACE YOU STORE YOUR TXT FILES
-    // (for Apple products the slashes go the other way too)
-    String path = "C:\\songs\\";
-
     // if reading from file then make model from file, else make an entirely new model
     if (useFile) {
       model = MusicEditor.getFromFile(fileName);
@@ -101,8 +94,7 @@ public class MusicEditor {
 
 
   static ModelOperations getFromFile(String filename) throws IOException {
-    String path = "C:\\songs\\";
-    Readable fileReader = new FileReader(path + filename);
+    Readable fileReader = new FileReader(filename);
     return MusicReader.parseFile(fileReader, new MusicModel.Builder());
   }
 }
