@@ -1,8 +1,6 @@
 package cs3500.music.view;
 
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiChannel;
@@ -338,6 +336,10 @@ public class MidiView implements MidiOperations, ViewOperations {
     this.model = model;
   }
 
+  public void setSynthesizer(Synthesizer synthesizer) {
+    this.synth = synthesizer;
+  }
+
 
   /*
   You must implement either a builder or convenience constructors for your MIDI view,
@@ -360,7 +362,7 @@ public class MidiView implements MidiOperations, ViewOperations {
     private MidiView midiView;
 
     Builder() {
-      this.midiView = new MidiView(new MusicModel());
+      this.midiView = new MidiView(new MusicModel(), true);
     }
 
     public Builder setModel(ModelOperations model) {
@@ -368,12 +370,13 @@ public class MidiView implements MidiOperations, ViewOperations {
       return this;
     }
 
+
     /**
-     * Build using a midiDevice
+     * Build using a Synth
      * @return the Builder
      */
-    public Builder setSequencer(Sequencer sequencer) {
-      midiView.setSequencer(sequencer);
+    public Builder setSynth(Synthesizer synth) {
+      midiView.setSynthesizer(synth);
       return this;
     }
 
