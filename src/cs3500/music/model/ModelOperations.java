@@ -33,7 +33,7 @@ public interface ModelOperations {
    * Otherwise, it simply adds the note.
    *
    * @param note the Note to be added
-   * @throws IllegalArgumentException if there is already the same note taking up this space
+   * @throws IllegalArgumentException if there is already the same note taking up this exact space
    */
   void addNote(Note note) throws IllegalArgumentException;
 
@@ -125,14 +125,27 @@ public interface ModelOperations {
   void combineConsecutively(ModelOperations thatTrack);
 
   /**
-   * Gets all the Notes playing on the given beat in a List of Notes.
+   * Returns the number of Beats in the Model.
    *
-   * @param beat the given beat
-   * @return All the Notes at the given beat in an List
-   * @throws IllegalArgumentException if beat points to negative
+   * @return the number of Beats in the Model
    */
-  List<Note> getAllPlayingAtBeat(int beat);
+  int numBeats();
 
+  /**
+   * Returns whether this Model has any Notes stored.
+   *
+   * @return if this model isEmpty
+   */
+  boolean isEmpty();
+
+  /**
+   * Stores thatTrack as a new Track(completely replaces the stored Track).
+   *
+   * @param thatTrack the Track to be stored
+   */
+  void overwriteWith(ModelOperations thatTrack);
+
+  // Below are the methods that use details of our model implementation
 
   /**
    * Gets all the Notes starting on the given beat in a List of Notes.
@@ -143,12 +156,13 @@ public interface ModelOperations {
   List<Note> getAllStartingAtBeat(int beat);
 
   /**
-   * Stores thatTrack as a new Track(completely replaces the stored Track).
+   * Gets all the Notes playing on the given beat in a List of Notes.
    *
-   * @param thatTrack the Track to be stored
+   * @param beat the given beat
+   * @return All the Notes at the given beat in an List
+   * @throws IllegalArgumentException if beat points to negative
    */
-  void overwriteWith(ModelOperations thatTrack);
-
+  List<Note> getAllPlayingAtBeat(int beat);
 
   /**
    * Returns the List of Notes stored in this model.
@@ -158,46 +172,6 @@ public interface ModelOperations {
   List<Note> getNotes();
 
   /**
-   * Changes the instrument of this Track to the given instrument.
-   *
-   * @param instrument the given instrument
-   */
-  void changeInstrument(Instrument instrument);
-
-
-  // THIS STUFF IS PROBABLY GOING TO BE PROTECTED OR PRIVATE METHODS IN MODEL IMPLEMENTATION
-
-  /**
-   * Returns the number of Beats in the Model.
-   *
-   * @return the number of Beats in the Model
-   */
-  int numBeats();
-
-  /**
-   * Returns a Note stored with the highest Tone.
-   *
-   * @return the highest Note
-   * @throws IllegalArgumentException if there are no stored notes
-   */
-  Note getLowestNote() throws IllegalArgumentException;
-
-  /**
-   * Returns a Note stored of the lowest tone.
-   *
-   * @return the lowest note
-   * @throws IllegalArgumentException if there are no stored notes
-   */
-  Note getHighestNote() throws IllegalArgumentException;
-
-  /**
-   * Returns whether this has any Notes stored.
-   *
-   * @return if this isEmpty
-   */
-  boolean isEmpty();
-
-  /**
    * Gets the Instrument of the Track.
    *
    * @return the instrument
@@ -205,9 +179,35 @@ public interface ModelOperations {
   Instrument getInstrument();
 
   /**
-   * Gets the Map representation of beats and Notes.
+   * Changes the instrument of this model to the given instrument.
    *
-   * @return the map of beats and Notes
+   * @param instrument the given instrument
    */
-  Map<Integer, List<Note>> getMap();
+  void changeInstrument(Instrument instrument);
+
+  // may not be necessary
+
+  /**
+   * Returns a Note stored with the highest pitch and octave pairing.
+   *
+   * @return the highest Note
+   * @throws IllegalArgumentException if there are no stored notes
+   */
+  Note getLowestNote() throws IllegalArgumentException;
+
+  /**
+   * Returns a Note stored of the lowest pitch and octave pairing.
+   *
+   * @return the lowest note
+   * @throws IllegalArgumentException if there are no stored notes
+   */
+  Note getHighestNote() throws IllegalArgumentException;
+
+  //May not be strictly necessary, we didn't end up using this
+  //  /**
+  //   * Gets the Map representation of beats and Notes.
+  //   *
+  //   * @return the map of beats and Notes
+  //   */
+  //  Map<Integer, List<Note>> getMap();
 }
