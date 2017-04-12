@@ -68,6 +68,9 @@ public final class MusicModel implements ModelOperations {
       noteEndings.add(note.getDur().getEndBeat());
     }
 
+    if (noteEndings.isEmpty()) {
+      return 0;
+    }
     int last = Collections.max(noteEndings);
 
     return last;
@@ -274,7 +277,10 @@ public final class MusicModel implements ModelOperations {
     return this.instrument;
   }
 
-  @Override
+  /**
+   * Returns a map of Integer to list of notes representing the stored notes.
+   * @return a map of list of notes
+   */
   public Map<Integer, List<Note>> getMap() {
     return null;
   }
