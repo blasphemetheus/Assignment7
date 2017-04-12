@@ -159,7 +159,10 @@ public class CombinedView implements ViewOperations {
   public void playAllStartingAtBeat(int beat) {
     currentBeat = beat;
     this.beginPlaying();
+  }
 
+  public static CombinedView.Builder builder() {
+    return new CombinedView.Builder();
   }
 
   /**
@@ -181,35 +184,124 @@ public class CombinedView implements ViewOperations {
 
   /**
    * A Builder for my Combined View so that it can use mocks
-   * and not have a built in delay for tests.
+   * and not have a built in delay for tests, and also pass in custom midi and visual views.
    */
   public static final class Builder {
-    private CombinedView view;
+    private ModelOperations buildModel;
+    private Synthesizer buildSynth;
+    private Receiver buildRec;
+    private MidiView buildMidi;
+    private VisualView buildVisual;
+    private boolean delay;
 
     Builder() {
-      this.view = null;
+      delay = true;
     }
 
+    /**
+     * Builds the CombinedView. Throws an exception if the view is no null (no setSubViews call).
+     * @return
+     */
     public CombinedView build() {
-      Objects.requireNonNull(view);
-      return view;
-    }
-
-    public Builder setReceiver(Receiver rec) {
-      if (this.view.midiView instanceof MidiView) {
-        ((MidiView) this.view.midiView).setReceiver(rec);
-      } else {
-        throw new IllegalArgumentException("midiView field in combinedView is not a MidiView.");
+      if (buildModel == null) {
+        throw new IllegalArgumentException("Failed to pass in a model, cannot build CombinedView");
       }
-      (MidiView) this.view.midiView
-      this.view.midiView
 
+      CombinedView combinedView = new CombinedView(buildModel);
+
+      MidiView utilizedMidi;
+      VisualView utilizedVisual;
+
+      if (buildMidi == null) {
+        utilizedMidi = (MidiView) combinedView.midiView;
+      } else {
+        utilizedMidi = buildMidi;
+      }
+
+      if (buildSynth != null) {
+        utilizedMidi.setSynthesizer(buildSynth);
+      }
+
+      if (buildRec != null) {
+        utilizedMidi.setReceiver(buildRec);
+      }
+
+      if (!delay) {
+        utilizedMidi.hasNoDelay();
+      }
+
+      if (buildVisual == null) {
+        utilizedVisual = (VisualView) combinedView.visualView;
+      } else {
+        utilizedVisual = buildVisual;
+      }
+
+      if (!utilizedMidi.model.equals(utilizedVisual.model)) {
+        throw new IllegalArgumentException("model of midi and visual are not synced during build");
+      }
+
+      combinedView.midiView = utilizedMidi;
+      combinedView.visualView = utilizedVisual;
+
+      return combinedView;
     }
 
+    /**
+     * Sets the Receiver for the CombinedView within this Builder.
+     * @param rec the given receiver to be set
+     * @return the Builder
+     */
+    public Builder setReceiver(Receiver rec) {
+      this.buildRec = rec;
+      return this;
+    }
+
+    /**
+     * Sets the synthesizer for the CombinedView within the Builder.
+     * @param synth the given synth to be set as
+     * @return the Builder
+     */
     public Builder setSynthesizer(Synthesizer synth) {
-
+      this.buildSynth = synth;
+      return this;
     }
 
+    /**
+     * Sets the midi for the combinedView within the Builder.
+     * @param midi the given midiView
+     * @return the Builder
+     */
+    public Builder setMidi(MidiView midi) {
+      this.buildMidi = midi;
+      return this;
+    }
 
+    /**
+     * Sets the visual for the combinedView within the Builder.
+     * @param visual the given visualView
+     * @return the Builder
+     */
+    public Builder setVisual(VisualView visual) {
+      this.buildVisual = visual;
+      return this;
+    }
+
+    /**
+     * Build using noDelay (for testing purposes).
+     * @return the Builder
+     */
+    public Builder noDelay() {
+      this.delay = false;
+      return this;
+    }
+
+    /**
+     * Building using delay during playback specifically (so the music plays in real time).
+     * @return the Builder
+     */
+    public Builder delay() {
+      this.delay = true;
+      return this;
+    }
   }
 }

@@ -43,7 +43,7 @@ public class VisualView extends javax.swing.JFrame implements ViewOperations {
   public int HEIGHT = 600;
   private boolean scroll;
 
-  ModelOperations viewModel;
+  ModelOperations model;
 
   public static final int X_FRAME = 10;
   public static final int Y_FRAME = 10;
@@ -56,7 +56,7 @@ public class VisualView extends javax.swing.JFrame implements ViewOperations {
   public VisualView(ModelOperations model) {
     super("Music Editor");
     // String first = model.getNotes().get(0).toString();
-    this.viewModel = model;
+    this.model = model;
     this.scroll = false;
 
     JPanel container = new JPanel();
@@ -216,7 +216,7 @@ public class VisualView extends javax.swing.JFrame implements ViewOperations {
 
   @Override
   public List<Note> getNotesAtCurrentBeat() {
-    return viewModel.getAllStartingAtBeat(this.displayPanel.bar);
+    return model.getAllStartingAtBeat(this.displayPanel.bar);
   }
 
   @Override

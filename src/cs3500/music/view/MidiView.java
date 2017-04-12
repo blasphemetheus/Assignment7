@@ -206,14 +206,43 @@ public class MidiView implements ViewOperations {
    */
   @Override
   public void togglePlayback() {
+    if (pause) {
+      this.startMusic();
+    } else {
+      this.stopMusic();
+    }
+  }
 
+  /**
+   * Handles changing the music from unpaused to paused.
+   * (if at last beat, simply stop playback, if before last, stop playback,
+   * if before beginning, throw error, if after end, throw error.
+   */
+  private void stopMusic() {
+  }
+
+  /**
+   * Handles when the music is paused and we wish it to be unpaused.
+   * (If at last beat, restart, if before last beat, start at that beat.
+   * If before beginning, throw error).
+   */
+  private void startMusic() {
+    if (currentBeat == model.numBeats()) {
+      this.jumpToBeginning();
+      this.playAllStartingAtBeat(currentBeat);
+    } else {
+      if (currentBeat < 0) {
+        throw new IllegalArgumentException("Current Beat Before 0, can't start playback");
+      } else {
+        this.playAllStartingAtBeat(currentBeat);
+      }
+    }
   }
 
   @Override
   public List<Note> getNotesAtCurrentBeat() {
     return null;
   }
-
 
 
 
@@ -304,6 +333,10 @@ public class MidiView implements ViewOperations {
   ///////////////////////////////////////////////////////////////////////////////////
 
 
+  /**
+   * Statically makes a builder for a CombinedView.
+   * @return a Builder for this class
+   */
   public static MidiView.Builder builder() {
     return new MidiView.Builder();
   }
@@ -313,12 +346,27 @@ public class MidiView implements ViewOperations {
     this.model = model;
   }
 
+  /**
+   * Sets the Synthesizer.
+   * @param synthesizer the given synthesizer
+   */
   public void setSynthesizer(Synthesizer synthesizer) {
     this.synth = synthesizer;
   }
 
+  /**
+   * Sets the Receiver.
+   * @param receiver the given receiver
+   */
   public void setReceiver(Receiver receiver) {
     this.receiver = receiver;
+  }
+
+  /**
+   * Sets the view to have no delay.
+   */
+  public void hasNoDelay() {
+    this.testing = true;
   }
 
   /*
@@ -339,14 +387,48 @@ public class MidiView implements ViewOperations {
    * use my mocks instead.
    */
   public static final class Builder {
-    private MidiView midiView;
+    private ModelOperations model;
+    private Synthesizer buildSynth;
+    private Receiver buildRec;
+    private boolean delay;
 
     Builder() {
-      this.midiView = null;
+      delay = true;
     }
 
+    /**
+     * Build the stored midiView. Throws an exception if setModel is not called.
+     * @return the built midiView
+     */
+    public MidiView build() {
+      if (model == null) {
+        throw new IllegalArgumentException("Failed to pass in a model, cannot build MidiView");
+      }
+
+      MidiView midi = new MidiView(model);
+
+      if (buildSynth != null) {
+        midi.setSynthesizer(buildSynth);
+      }
+
+      if (buildRec != null) {
+        midi.setReceiver(buildRec);
+      }
+
+      if (!delay) {
+        midi.hasNoDelay();
+      }
+
+      return midi;
+    }
+
+    /**
+     * Sets the model for the builder.
+     * @param model the given ModelOperation
+     * @return the Builder
+     */
     public Builder setModel(ModelOperations model) {
-      midiView.setModel(model);
+      this.model = model;
       return this;
     }
 
@@ -355,40 +437,37 @@ public class MidiView implements ViewOperations {
      * @return the Builder
      */
     public Builder setSynth(Synthesizer synth) {
-      midiView.setSynthesizer(synth);
+      buildSynth = synth;
       return this;
     }
 
     /**
-     * Build the stored midiView. Throws an exception if the midiView is left null.
-     * (if setModel is not called).
-     * @return the built midiView
+     * Build using a Receiver.
+     * @param receiver the given receiver
+     * @return the Builder
      */
-    public MidiView build() {
-      Objects.requireNonNull(midiView);
-      return midiView;
-    }
-
     public Builder setReceiver(Receiver receiver) {
-      midiView.setReceiver(receiver);
+      this.buildRec = receiver;
       return this;
     }
 
+    /**
+     * Build using noDelay (for testing purposes).
+     * @return the Builder
+     */
     public Builder noDelay() {
-      midiView.noDelay();
+      this.delay = false;
       return this;
     }
 
+    /**
+     * Building using delay during playback specifically (so the music plays in real time).
+     * @return the Builder
+     */
     public Builder delay() {
-      midiView.delay();
+      this.delay = true;
       return this;
     }
   }
 
-  private void noDelay() {
-    this.testing = true;
-  }
-  private void delay() {
-    this.testing = false;
-  }
 }
