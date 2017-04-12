@@ -4,6 +4,7 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
 
 
 /**
@@ -28,7 +29,15 @@ public class MockReciever implements Receiver {
    */
   @Override
   public void send(MidiMessage message, long timeStamp) {
-    this.stringBuilder.append(message.toString() + ":timestamp:" + timeStamp);
+    try {
+      ShortMessage shortMessage = (ShortMessage) message;
+
+      this.stringBuilder.append("Cmd: " + shortMessage.getCommand() + "Channel: " +
+              shortMessage.getChannel() + "int1: " + shortMessage.getData1() + "int2: " +
+              shortMessage.getData2() + ":timestamp: " + timeStamp + "\n");
+    } catch (Exception e) {
+      throw new IllegalArgumentException("non ShortMessage sent");
+    }
   }
 
   /**
@@ -51,6 +60,6 @@ public class MockReciever implements Receiver {
    */
   @Override
   public void close() {
-    //TODO
+    throw new IllegalArgumentException("This is a mock reciever, cannot close");
   }
 }

@@ -1,6 +1,7 @@
 package cs3500.music.view;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiChannel;
@@ -341,7 +342,7 @@ public class MidiView implements ViewOperations {
     private MidiView midiView;
 
     Builder() {
-      this.midiView = new MidiView(new MusicModel(), true);
+      this.midiView = null;
     }
 
     public Builder setModel(ModelOperations model) {
@@ -359,10 +360,12 @@ public class MidiView implements ViewOperations {
     }
 
     /**
-     * Build the stored midiView.
+     * Build the stored midiView. Throws an exception if the midiView is left null.
+     * (if setModel is not called).
      * @return the built midiView
      */
     public MidiView build() {
+      Objects.requireNonNull(midiView);
       return midiView;
     }
 

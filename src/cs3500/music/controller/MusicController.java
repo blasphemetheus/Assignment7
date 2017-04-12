@@ -61,7 +61,7 @@ public class MusicController implements ControllerOperations {
 
     // My Stuff
     keyTypes.put('c', new MoveBeatOneBackward());
-    keyTypes.put('d', () -> this.view.printStuff("WOWZA"));
+    // keyTypes.put('d', () -> this.view.printStuff("WOWZA"));
     keyTypes.put('a', () -> this.view.addNoteAtBeat());
 
     keyPresses.put(KeyEvent.VK_LEFT, new MoveBeatOneBackward());

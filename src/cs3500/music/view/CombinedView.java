@@ -5,13 +5,16 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequencer;
+import javax.sound.midi.Synthesizer;
 import javax.swing.JButton;
 
 import cs3500.music.controller.KeyboardListener;
 import cs3500.music.controller.MouseInputListener;
 import cs3500.music.model.Duration;
 import cs3500.music.model.ModelOperations;
+import cs3500.music.model.MusicModel;
 import cs3500.music.model.Note;
 import cs3500.music.model.Octave;
 import cs3500.music.model.Pitch;
@@ -47,19 +50,6 @@ public class CombinedView implements ViewOperations {
     this.currentBeat = 0;
     this.pause = true;
     this.timer = new Timer();
-  }
-
-  public CombinedView(ModelOperations model, boolean testing) {
-    this.model = model;
-    if (testing) {
-      this.midiView = new MidiView(model, true);
-    } else {
-      this.midiView = new MidiView(model);
-    }
-    this.visualView = new VisualView(model);
-    this.testing = testing;
-    this.currentBeat = 0;
-    this.pause = false;
   }
 
   @Override
@@ -186,5 +176,40 @@ public class CombinedView implements ViewOperations {
         currentBeat += 1;
       }
     }
+  }
+
+
+  /**
+   * A Builder for my Combined View so that it can use mocks
+   * and not have a built in delay for tests.
+   */
+  public static final class Builder {
+    private CombinedView view;
+
+    Builder() {
+      this.view = null;
+    }
+
+    public CombinedView build() {
+      Objects.requireNonNull(view);
+      return view;
+    }
+
+    public Builder setReceiver(Receiver rec) {
+      if (this.view.midiView instanceof MidiView) {
+        ((MidiView) this.view.midiView).setReceiver(rec);
+      } else {
+        throw new IllegalArgumentException("midiView field in combinedView is not a MidiView.");
+      }
+      (MidiView) this.view.midiView
+      this.view.midiView
+
+    }
+
+    public Builder setSynthesizer(Synthesizer synth) {
+
+    }
+
+
   }
 }

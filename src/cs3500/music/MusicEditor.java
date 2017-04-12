@@ -92,7 +92,6 @@ public class MusicEditor {
     System.out.println("This text siginifies the end of the main method");
   }
 
-
   static ModelOperations getFromFile(String filename) throws IOException {
     Readable fileReader = new FileReader(filename);
     return MusicReader.parseFile(fileReader, new MusicModel.Builder());
