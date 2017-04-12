@@ -1,5 +1,7 @@
 package cs3500.music.view;
 
+
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -11,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
+import javax.swing.JPanel;
 
 
 
@@ -21,33 +24,31 @@ import cs3500.music.controller.MouseInputListener;
 import cs3500.music.model.ModelOperations;
 import cs3500.music.model.Note;
 
+import cs3500.music.model.MusicModel;
+
 /**
  * A skeleton Frame (i.e., a window) in Swing
  */
-public class VisualView extends javax.swing.JFrame implements VisualOperations, ViewOperations {
-  private final ConcreteGuiViewPanel displayPanel; // You may want to refine this to a subtype of JPanel
+public class VisualView extends javax.swing.JFrame implements ViewOperations {
+  private final VisualJPanel displayPanel; // You may want to refine this to a subtype of JPanel
   // Fossils from the MVC Class Example
   private JLabel display;
   private JButton echoButton;
   private JButton exitButton;
   private JTextField input;
-  private boolean scroll;
   JScrollPane scroller;
   private Graphics g;
   private Graphics2D g2;
-  public int width = 1000;
-  public int height = 600;
+  public int WIDTH = 1000;
+  public int HEIGHT = 600;
+  private boolean scroll;
 
+  ModelOperations viewModel;
 
   public static final int X_FRAME = 10;
   public static final int Y_FRAME = 10;
   public static final int X_SCALE = 10;
   public static final int Y_SCALE = 10;
-
-
-
-
-  ModelOperations viewModel;
 
   /**
    * Default public constructor, creates new VisualView.
@@ -57,10 +58,25 @@ public class VisualView extends javax.swing.JFrame implements VisualOperations, 
     // String first = model.getNotes().get(0).toString();
     this.viewModel = model;
     this.scroll = false;
-    displayPanel = new ConcreteGuiViewPanel(model);
-    displayPanel.setFocusable(true);
-    displayPanel.requestFocusInWindow();
+
+    JPanel container = new JPanel();
+    JScrollPane jsp = new JScrollPane(container);
+    container.setPreferredSize(new Dimension(WIDTH, HEIGHT/2));
+    container.setLayout(null);
+
+    // NEW STUFF :
+    //    displayPanel.setFocusable(true);
+    //    displayPanel.requestFocusInWindow();
+
+
+    // FOSSIL:
+//        setSize(1000, 1000);
+    //    setLocation(200, 200);
+    //    this.setResizable(false);
+    //		this.setMinimumSize(new Dimension(300,300));
+    displayPanel = new VisualJPanel(model);
     this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    this.getContentPane().add(container);
     this.getContentPane().add(displayPanel);
 
 
@@ -69,26 +85,23 @@ public class VisualView extends javax.swing.JFrame implements VisualOperations, 
     setBackground(Color.BLACK);
     //Set location of our Display
     //displayPanel.setLocation(200, 200);
-    setResizable(true);
-    //setMinimumSize(new Dimension(width, height));
+    setFocusable(true);
+    setResizable(false);
+    setMinimumSize(new Dimension(WIDTH, HEIGHT));
     //setMaximumSize(new Dimension(WIDTH, HEIGHT));
 
 
-    //FOSSIL UNTIL PACK() ------------------------------
-    //setLayout(new FlowLayout());
-
-    // END OF FOSSIL ------------------------------------
     this.pack();
     setVisible(true);
   }
 
 
-  public void initialize() {
+  public void initialize(){
     this.setVisible(true);
   }
 
   @Override
-  public Dimension getPreferredSize() {
+  public Dimension getPreferredSize(){
     return new Dimension(100, 100);
   }
 
@@ -110,19 +123,12 @@ public class VisualView extends javax.swing.JFrame implements VisualOperations, 
    *
    * @return the state of the game
    */
-  String getStringRepresentation() {
-    return "";
-  }
+  String getStringRepresentation(){return "";};
 
 
   @Override
   public void render() {
-    // this method will render, since that doesn't do anything
-  }
 
-  @Override
-  public void printStuff(String stuff) {
-    System.out.println(stuff);
   }
 
   @Override
@@ -201,7 +207,9 @@ public class VisualView extends javax.swing.JFrame implements VisualOperations, 
     System.out.println("Scroll right");
   }
 
-  @Override
+  /**
+   * Sets the view to switch whether to render the scroll.
+   */
   public void toggleScroll() {
     scroll = !scroll;
   }
@@ -209,6 +217,16 @@ public class VisualView extends javax.swing.JFrame implements VisualOperations, 
   @Override
   public List<Note> getNotesAtCurrentBeat() {
     return viewModel.getAllStartingAtBeat(this.displayPanel.bar);
+  }
+
+  @Override
+  public void setModel(ModelOperations model) {
+
+  }
+
+  @Override
+  public void playAllStartingAtBeat(int beat) {
+
   }
 
   @Override

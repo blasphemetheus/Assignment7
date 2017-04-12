@@ -22,15 +22,12 @@ import cs3500.music.model.Note;
 import cs3500.music.model.Octave;
 import cs3500.music.model.Pitch;
 
-// ASSIGNMENT 7: changed how midi works fro synthesizer and reciever to a sequencer (so
-//                  we can easily jump around the sequence given the methods of a sequencer)
-
 // ASSIGNMENT 7: changed how midi works (added a testing boolean so we can skip the delay,
 // in a separate constructor)
 /**
  * The view that renders as audio (via MIDI) playback.
  */
-public class MidiView implements MidiOperations, ViewOperations {
+public class MidiView implements ViewOperations {
   ModelOperations model;
   private Synthesizer synth;
   private Sequencer sequencer;
@@ -73,31 +70,6 @@ public class MidiView implements MidiOperations, ViewOperations {
   }
 
   /**
-   * The testing constructor for the MidiView.
-   */
-  public MidiView(ModelOperations model, boolean testing) {
-
-    if (testing) {
-      this.receiver = new MockReciever(new StringBuilder());
-      this.synth = new MockSynthesizer(new StringBuilder());
-
-
-    } else {
-      try {
-        this.synth = MidiSystem.getSynthesizer();
-        this.receiver = synth.getReceiver();
-        this.synth.open();
-      } catch (MidiUnavailableException e) {
-        e.printStackTrace();
-      }
-    }
-    this.model = model;
-    this.testing = testing;
-    this.currentBeat = 0;
-    this.pause = true;
-  }
-
-  /**
    * Permanently ends playback.
    */
   public void endPlayback() {
@@ -112,9 +84,6 @@ public class MidiView implements MidiOperations, ViewOperations {
     List<Note> listOfNotes = model.getNotes();
 
     System.out.println("play song now");
-
-//    Timer timer = new Timer();
-//    timer.schedule(new MyTimerTask(), 0, model.getTempo() / 1000);
 
     for (Note note : listOfNotes) {
       try {
@@ -134,11 +103,6 @@ public class MidiView implements MidiOperations, ViewOperations {
       System.out.println("Interrupted Yo");
       e.printStackTrace();
     }
-  }
-
-  @Override
-  public void printStuff(String stuff) {
-    System.out.println();
   }
 
   /**
@@ -236,43 +200,53 @@ public class MidiView implements MidiOperations, ViewOperations {
     }
   }
 
+  /*
+   * Shouldn't be useless in this view, but currently is.
+   */
+  @Override
+  public void togglePlayback() {
+
+  }
+
+  @Override
+  public List<Note> getNotesAtCurrentBeat() {
+    return null;
+  }
+
+
+
+
+
   @Override
   public void addKeyListener(KeyboardListener kbd) {
     // useless in this view
-
   }
 
   @Override
   public void removeKeyListener(KeyboardListener kbd) {
-
+    //useless in this view
   }
+
+  @Override
+  public void addMouseListener(MouseInputListener mil) {
+    // useless in this view
+  }
+
+  @Override
+  public void removeMouseListener(MouseInputListener mil) {
+    // useless in this view
+  }
+
+
 
   @Override
   public void moveRight() {
     // useless in this view
-
   }
 
   @Override
   public void moveLeft() {
     // useless in this view
-
-  }
-
-  @Override
-  public void addMouseListener(MouseInputListener mil) {
-
-  }
-
-  @Override
-  public void removeMouseListener(MouseInputListener mil) {
-
-  }
-
-  @Override
-  public void togglePlayback() {
-
-
   }
 
   @Override
@@ -299,6 +273,13 @@ public class MidiView implements MidiOperations, ViewOperations {
   public void update() {
     // DO NOTHING
   }
+
+  @Override
+  public void updateRedLine() {
+    // DO NOTHING
+  }
+
+
 
   /**
    * Outputs the integer representation of a pitch (in the range [0 127]).
@@ -327,11 +308,6 @@ public class MidiView implements MidiOperations, ViewOperations {
   }
 
   @Override
-  public void setSequencer(Sequencer sequencer) {
-    this.sequencer = sequencer;
-  }
-
-  @Override
   public void setModel(ModelOperations model) {
     this.model = model;
   }
@@ -340,6 +316,9 @@ public class MidiView implements MidiOperations, ViewOperations {
     this.synth = synthesizer;
   }
 
+  public void setReceiver(Receiver receiver) {
+    this.receiver = receiver;
+  }
 
   /*
   You must implement either a builder or convenience constructors for your MIDI view,
@@ -370,9 +349,8 @@ public class MidiView implements MidiOperations, ViewOperations {
       return this;
     }
 
-
     /**
-     * Build using a Synth
+     * Build using a Synth.
      * @return the Builder
      */
     public Builder setSynth(Synthesizer synth) {
@@ -387,5 +365,27 @@ public class MidiView implements MidiOperations, ViewOperations {
     public MidiView build() {
       return midiView;
     }
+
+    public Builder setReceiver(Receiver receiver) {
+      midiView.setReceiver(receiver);
+      return this;
+    }
+
+    public Builder noDelay() {
+      midiView.noDelay();
+      return this;
+    }
+
+    public Builder delay() {
+      midiView.delay();
+      return this;
+    }
+  }
+
+  private void noDelay() {
+    this.testing = true;
+  }
+  private void delay() {
+    this.testing = false;
   }
 }

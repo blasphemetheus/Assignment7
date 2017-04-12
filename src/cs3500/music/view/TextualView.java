@@ -48,19 +48,14 @@ public class TextualView implements ViewOperations {
   }
 
   @Override
-  public void printStuff(String stuff) {
-    System.out.println(stuff);
-  }
-
-  @Override
   public void addKeyListener(KeyboardListener kbd) {
-
+    // Nonefunctional in this view
     // does nothing, because no commands should do anything as of yet
   }
 
   @Override
   public void removeKeyListener(KeyboardListener kbd) {
-
+    // Nonefunctional in this view
   }
 
   // MAKE SURE TO USE getNotes() !!!!!!!!!!!!!!
@@ -207,44 +202,42 @@ public class TextualView implements ViewOperations {
 
   @Override
   public void moveRight() {
-
     // DOES NOTHING BECAUSE THIS VIEW DOES NOT FIND THAT COMMAND TO BE USEFUL
-
   }
 
   @Override
   public void moveLeft() {
-
     // DOES NOTHING BECAUSE THIS VIEW DOES NOT FIND THAT COMMAND TO BE USEFUL
   }
 
   @Override
   public void addMouseListener(MouseInputListener mil) {
-
+    // Nonefunctional in this view
   }
 
   @Override
   public void removeMouseListener(MouseInputListener mil) {
-
+    // Nonefunctional in this view
   }
 
   @Override
   public void togglePlayback() {
-
+    // Nonefunctional in this view
   }
 
   @Override
   public void jumpToBeginning() {
-
+    // Nonefunctional in this view
   }
 
   @Override
   public void jumpToEnd() {
-
+    // Nonefunctional in this view
   }
 
   @Override
   public void addNoteAtBeat(Note note) {
+    // Nonefunctional in this view
     System.out.println("addnoteatbeat in midiview");
   }
 
@@ -255,6 +248,26 @@ public class TextualView implements ViewOperations {
 
   @Override
   public void update() {
+    // Nonefunctional in this view
+  }
+
+  @Override
+  public void updateRedLine() {
+    // Nonefunctional in this view
+  }
+
+  @Override
+  public List<Note> getNotesAtCurrentBeat() {
+    return null;
+  }
+
+  @Override
+  public void setModel(ModelOperations model) {
+
+  }
+
+  @Override
+  public void playAllStartingAtBeat(int beat) {
 
   }
 }

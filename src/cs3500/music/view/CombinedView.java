@@ -22,17 +22,19 @@ import cs3500.music.model.Pitch;
  * The user can toggle midi play by pressing the spacebar. While midi is not playing, users can
  * add notes by clicking the keyboard buttons.
  */
-public class CombinedView implements ViewOperations, VisualOperations, MidiOperations {
-  private MidiOperations midiView;
-  private VisualOperations visualView;
+public class CombinedView implements ViewOperations {
+  private ViewOperations midiView;
+  private ViewOperations visualView;
   private ModelOperations model;
   private int currentBeat;
   private boolean pause;
   private boolean testing;
+  Timer timer;
 
-  // sequencer from midiview
-  protected Sequencer sequencer;
-  protected float sequencerTempo;
+
+  //  // sequencer from midiview
+  //  protected Sequencer sequencer;
+  //  protected float sequencerTempo;
 
   // button to add a note
   protected JButton addNoteButton;
@@ -43,7 +45,8 @@ public class CombinedView implements ViewOperations, VisualOperations, MidiOpera
     this.midiView = new MidiView(model);
     this.testing = false;
     this.currentBeat = 0;
-    this.pause = false;
+    this.pause = true;
+    this.timer = new Timer();
   }
 
   public CombinedView(ModelOperations model, boolean testing) {
@@ -66,13 +69,9 @@ public class CombinedView implements ViewOperations, VisualOperations, MidiOpera
   }
 
   private void beginPlaying() {
-    Timer timer = new Timer();
-    timer.schedule(new MyTimerTask(), 0, model.getTempo() / 1000);
-  }
-
-  @Override
-  public void printStuff(String stuff) {
-    System.out.println(stuff);
+    if (!pause) {
+      this.timer.schedule(new MyTimerTask(), 0, model.getTempo() / 1000);
+    }
   }
 
   @Override
@@ -108,6 +107,7 @@ public class CombinedView implements ViewOperations, VisualOperations, MidiOpera
   @Override
   public void togglePlayback() {
     this.pause = !this.pause;
+    this.beginPlaying();
   }
 
   @Override
@@ -156,20 +156,8 @@ public class CombinedView implements ViewOperations, VisualOperations, MidiOpera
   }
 
   @Override
-  public void toggleScroll() {
-
-  }
-
-  @Override
   public List<Note> getNotesAtCurrentBeat() {
     return visualView.getNotesAtCurrentBeat();
-  }
-
-  // UNNEEDED, NOT USING SEQUENCER
-  @Override
-  public void setSequencer(Sequencer sequencer) {
-    Objects.requireNonNull(sequencer);
-    midiView.setSequencer(sequencer);
   }
 
   @Override

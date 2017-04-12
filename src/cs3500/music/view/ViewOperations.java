@@ -1,16 +1,14 @@
 package cs3500.music.view;
 
-import java.awt.event.MouseListener;
 import java.util.List;
 
-import cs3500.music.controller.ButtonListener;
 import cs3500.music.controller.KeyboardListener;
 import cs3500.music.controller.MouseInputListener;
 import cs3500.music.model.ModelOperations;
 import cs3500.music.model.Note;
 
 /**
- * The operations that all of the views need to be able to handle. Most of these
+ * The operations that all of the views need to be able to handle.
  */
 public interface ViewOperations {
 
@@ -36,7 +34,6 @@ public interface ViewOperations {
    * Toggles playback for the view. (Has no effect on visual and textual views)
    */
   void togglePlayback();
-
 
   /**
    * Jumps to beginning of the representation stored in the view. Does not work during playback.
