@@ -6,7 +6,6 @@ import java.util.Objects;
  * Represents a Note, which has pitch, octave, duration and volume.
  */
 public class Note {
-  //private double volume;
 
   private Pitch pitch;
 
